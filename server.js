@@ -1,21 +1,30 @@
 var express = require('express'),
-  app = express(),
-  port = process.env.PORT || 3000,
-  mongoose = require('mongoose'),
-  Task = require('./api/models/todoListModel'), //created model loading here
-  bodyParser = require('body-parser');
-  
+    app = express(),
+    port = process.env.PORT || 3000,
+    mongoose = require('mongoose'),
+    Task = require('./api/models/todoListModel'), //created model loading here
+    EnvObserver = require('./api/models/EnvObserverModel'),
+    bodyParser = require('body-parser');
+
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Tododb'); 
+mongoose.connect('mongodb://localhost/envobserver');
 
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+// app.use(cors);
 
 
 var routes = require('./api/routes/todoListRoutes'); //importing route
+var envObserverRoutes = require('./api/routes/EnvObserverRoutes');
 routes(app); //register the route
+envObserverRoutes(app);
 
 
 app.listen(port);
