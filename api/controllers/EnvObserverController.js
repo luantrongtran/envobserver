@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     EnvObserver = mongoose.model('EnvObservers');
 var EnvObserverData = mongoose.model('EnvObserverData');
 
-const DEFAULT_LIMIT = 10;
+const DEFAULT_LIMIT = 30;
 
 exports.listAll = function (req, res) {
     EnvObserver.find({}, function (err, envObserver) {
@@ -49,7 +49,7 @@ exports.getDataOfADevice = function (req, res) {
 
                 console.log(filter);
 
-                let query = EnvObserverData.find(filter).sort({createdAt: -1})
+                let query = EnvObserverData.find(filter).sort({recorded_at: -1})
                     .lean()
                     .limit(limit);
 
@@ -58,12 +58,12 @@ exports.getDataOfADevice = function (req, res) {
                     result.data = obData;// JSON.stringify(obData);
 
                     //construct next page link which will show rows recorded after the earliest record.
-                    if (result.data.length != 0) {
+                    if (result.data.length != 0 && result.data.length === limit) {
                         let lastRecord = result.data[result.data.length - 1];
                         let s = JSON.stringify(lastRecord);
                         let j = JSON.parse(s);
                         let nextPageLink = 'deviceId=' + deviceId;
-                        nextPageLink += '&fromDate=' + j.createdAt;
+                        nextPageLink += '&fromDate=' + j.recorded_at;
 
                         let link = {};
                         link.href = nextPageLink;
