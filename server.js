@@ -26,7 +26,6 @@ var envObserverRoutes = require('./api/routes/EnvObserverRoutes');
 routes(app); //register the route
 envObserverRoutes(app);
 
-
 app.listen(port);
 
 

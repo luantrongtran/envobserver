@@ -4,7 +4,9 @@ var mongoose = require('mongoose'),
     EnvObserver = mongoose.model('EnvObservers');
 var EnvObserverData = mongoose.model('EnvObserverData');
 
-const DEFAULT_LIMIT = 30;
+const {ENVOBSERVER_LIMIT} = require("../config/config");
+
+// const DEFAULT_LIMIT = 30;
 
 exports.listAll = function (req, res) {
     EnvObserver.find({}, function (err, envObserver) {
@@ -19,6 +21,8 @@ exports.listAll = function (req, res) {
  * This is to get the data of a device (a.k.a EnvObserver)
  */
 exports.getDataOfADevice = function (req, res) {
+    console.log(ENVOBSERVER_LIMIT);
+
     // extract the device ID in the GET url query named deviceId
     let deviceId = req.query.deviceId;
     // no of records per call
@@ -26,7 +30,7 @@ exports.getDataOfADevice = function (req, res) {
     // if no page submitted
     if (limit === undefined || limit === null) {
         // load page 1 by default
-        limit = DEFAULT_LIMIT;
+        limit = ENVOBSERVER_LIMIT;
     }
 
     let fromDate = req.query.fromDate;
