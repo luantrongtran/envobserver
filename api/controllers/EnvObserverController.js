@@ -68,6 +68,7 @@ exports.getDataOfADevice = function (req, res) {
                         let j = JSON.parse(s);
                         let nextPageLink = 'deviceId=' + deviceId;
                         nextPageLink += '&fromDate=' + j.recorded_at;
+                        nextPageLink += '&limit=' + limit;
 
                         let link = {};
                         link.href = nextPageLink;
