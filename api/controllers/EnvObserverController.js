@@ -26,7 +26,7 @@ exports.getDataOfADevice = function (req, res) {
     // extract the device ID in the GET url query named deviceId
     let deviceId = req.query.deviceId;
     // no of records per call
-    let limit = req.query.limit;
+    let limit = parseInt(req.query.limit, 10);
     // if no page submitted
     if (limit === undefined || limit === null) {
         // load page 1 by default
