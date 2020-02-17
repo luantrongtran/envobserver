@@ -37,7 +37,7 @@ exports.getDataOfADevice = function (req, res) {
 
 
     // find the device matching the deviceId
-    let device = EnvObserver.findOne({deviceId: deviceId}, function (err, envObserver) {
+    let device = EnvObserver.findOne({_id: deviceId}, function (err, envObserver) {
         if (err) {
 
         } else {
@@ -97,7 +97,7 @@ exports.getDataOfADevice = function (req, res) {
 exports.uploadData = function (req, res) {
     // console.log(req.body);
     var newObj = req.body;
-    EnvObserver.findOne({deviceId: newObj.deviceId}, function (err, envObserver) {
+    EnvObserver.findOne({_id: newObj.deviceId}, function (err, envObserver) {
         if (err) {
             res.status(500).end();
         } else {
@@ -131,23 +131,27 @@ exports.uploadData = function (req, res) {
 };
 
 exports.registerNewDevice = function (req, res) {
-    var newDevice = new EnvObserver(req.body);
-    console.log(newDevice);
-    EnvObserver.findOne({deviceId: newDevice.id}, function (err, envObserver) {
-        console.log(newDevice.id);
-        if (envObserver !== null) {
-            res.status(400).end('already registered');
-        } else {
-            newDevice.save();
-            res.end();
-        }
-    });
+    var newDevice = new EnvObserver();
+    newDevice.save();
+    console.log(newDevice._id);
+    res.json(newDevice);
+    // console.log(newDevice);
+    // EnvObserver.findOne({deviceId: newDevice.id}, function (err, envObserver) {
+    //     console.log(newDevice.id);
+    //     if (envObserver !== null) {
+    //         res.status(400).end('already registered');
+    //     } else {
+    //         newDevice.save();
+    //         res.end();
+    //     }
+    // });
+
 };
 
 exports.findById = function (req, res) {
     var deviceId = req.params.id;
     console.log(deviceId);
-    EnvObserver.findOne({deviceId: deviceId}, {deviceId: 1, name: 1}, function (err, envObserver) {
+    EnvObserver.findOne({_id: deviceId}, {deviceId: 1, name: 1}, function (err, envObserver) {
         if (err) {
         } else {
             res.json(envObserver);

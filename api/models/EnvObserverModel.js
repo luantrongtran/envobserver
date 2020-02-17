@@ -5,11 +5,6 @@ const EnvObserverData = require("../models/EnvObserverDataModel")
 var Schema  = mongoose.Schema;
 
 var EnvObserver = new Schema({
-    deviceId: {
-        type: String,
-        unique: true,
-        required: 'Missing device ID'
-    },
     name : {
         type: String,
         default: "Unknown"
