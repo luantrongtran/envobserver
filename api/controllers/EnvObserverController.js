@@ -135,17 +135,6 @@ exports.registerNewDevice = function (req, res) {
     newDevice.save();
     console.log(newDevice._id);
     res.json(newDevice);
-    // console.log(newDevice);
-    // EnvObserver.findOne({deviceId: newDevice.id}, function (err, envObserver) {
-    //     console.log(newDevice.id);
-    //     if (envObserver !== null) {
-    //         res.status(400).end('already registered');
-    //     } else {
-    //         newDevice.save();
-    //         res.end();
-    //     }
-    // });
-
 };
 
 exports.findById = function (req, res) {
