@@ -25,9 +25,10 @@ var routes = require('./api/routes/todoListRoutes'); //importing route
 var envObserverRoutes = require('./api/routes/EnvObserverRoutes');
 let userRoutes = require('./api/routes/UserRoutes');
 routes(app); //register the route
-envObserverRoutes(app);
+// envObserverRoutes(app);
 // userRoutes(app);
 app.use('/users', userRoutes);
+app.use('/envobservers', envObserverRoutes);
 
 
 app.listen(port);

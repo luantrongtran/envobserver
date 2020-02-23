@@ -17,7 +17,7 @@ router.post('/signup', [
 ], userController.signUp);
 
 router.post('/signin', [
-    check('email').isEmail().withMessage('Invalid email').not().isEmpty().withMessage('Please enter username'),
+    check('email').isEmail().withMessage('Please enter an valid email'),
     check('password', 'Please enter password').not().isEmpty()
 ], userController.signIn);
 

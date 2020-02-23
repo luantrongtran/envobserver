@@ -9,16 +9,16 @@ const jwt = require('jsonwebtoken');
 
 exports.signUp = async function (req, res) {
     const errors = validationResult(req);
-    console.log(errors);
     if (!errors.isEmpty()) {
         return res.status(400).json({
             errors: errors.array()
         });
+        return;
     }
 
-    const { email, password, confirm_password } = req.body;
+    const { email, password, confirmPassword } = req.body;
     // checking confirm password
-    if (password !== confirm_password) {
+    if (password !== confirmPassword) {
         res.status(400).json({
             errors: [
                 {
@@ -26,6 +26,7 @@ exports.signUp = async function (req, res) {
                 }
             ]
         });
+        return;
     }
 
     // checking if the email has been used
@@ -36,6 +37,7 @@ exports.signUp = async function (req, res) {
                 { msg: 'Email has been used' }
             ]
         });
+        return;
     }
 
     let user = new User();
@@ -53,7 +55,6 @@ exports.signUp = async function (req, res) {
 exports.signIn = async function (req, res) {
 
     const errors = validationResult(req);
-    console.log(errors);
     if (!errors.isEmpty()) {
         return res.status(400).json({
             errors: errors.array()
@@ -71,6 +72,7 @@ exports.signIn = async function (req, res) {
                 }
             ]
         });
+        return;
     }
 
     //compare password
@@ -83,6 +85,7 @@ exports.signIn = async function (req, res) {
                 }
             ]
         });
+        return;
     }
 
     const payload = {
