@@ -3,13 +3,24 @@
 var mongoose = require('mongoose'),
     EnvObserver = mongoose.model('EnvObservers');
 var EnvObserverData = mongoose.model('EnvObserverData');
-
+const userModel = mongoose.model('Users');
+const {check, validationResult} = require('express-validator');
 const {ENVOBSERVER_LIMIT} = require("../config/config");
+const jwt = require('jsonwebtoken');
 
 // const DEFAULT_LIMIT = 30;
 
+/**
+ * This returns
+ * @param req
+ * @param res
+ */
 exports.listAll = function (req, res) {
-    EnvObserver.find({}, function (err, envObserver) {
+    const token = req.header('token');
+    const decoded = jwt.decode(token);
+    const user = decoded.user;
+
+    EnvObserver.find({owner: user.userId}, function (err, envObserver) {
         if (err) {
             res.send(err);
         }
@@ -131,10 +142,31 @@ exports.uploadData = function (req, res) {
 };
 
 exports.registerNewDevice = function (req, res) {
-    var newDevice = new EnvObserver();
-    newDevice.save();
-    console.log(newDevice._id);
-    res.json(newDevice);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
+        });
+        return;
+    }
+
+    const {userId} = req.body;
+    // checking if a valid userId submitted
+    userModel.findOne({_id: userId}).then((user) => {
+        let newDevice = new EnvObserver();
+        newDevice.owner = userId;
+        newDevice.save();
+        res.json(newDevice);
+        return;
+    }, errors => {
+        res.status(400).json({
+            errors: [
+                {
+                    msg: 'Invalid userId'
+                }
+            ]
+        });
+    });
 };
 
 exports.findById = function (req, res) {

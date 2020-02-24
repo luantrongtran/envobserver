@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { check, validationResult } = require('express-validator');
 let envObserverController = require('../controllers/EnvObserverController');
 const auth = require('../middleware/auth');
 
@@ -14,7 +15,9 @@ router.get('/:id', auth, envObserverController.findById);
 /**
  * THe following 2 is used by IOT devices
  */
-router.post('/', [], envObserverController.registerNewDevice);
+router.post('/', [
+    check('userId').not().isEmpty().withMessage('No userId provided')
+], envObserverController.registerNewDevice);
 router.post('/uploaddata', [], envObserverController.uploadData);
 
 module.exports = router;
