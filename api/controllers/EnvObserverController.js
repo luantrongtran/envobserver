@@ -180,3 +180,9 @@ exports.findById = function (req, res) {
     });
 
 };
+
+exports.linkDeviceWIthUser = function (req, res)
+{
+    const resBody = res.body;
+
+}
