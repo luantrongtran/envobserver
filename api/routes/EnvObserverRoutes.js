@@ -12,6 +12,12 @@ router.get('/', auth, envObserverController.listAll);
 
 router.get('/:id', auth, envObserverController.findById);
 
+router.post('/linkDeviceUser', [
+    auth,
+    check('userId').not().isEmpty().withMessage('userId must not be empty'),
+    check('deviceId').not().isEmpty().withMessage('deviceId must not be empty')
+], envObserverController.linkDeviceWIthUser);
+
 /**
  * THe following 2 is used by IOT devices
  */
@@ -21,20 +27,3 @@ router.post('/', [
 router.post('/uploaddata', [], envObserverController.uploadData);
 
 module.exports = router;
-
-// module.exports = function (app) {
-//     let envObserverController = require('../controllers/EnvObserverController');
-
-//     app.route('/envobservers/getdata')
-//     .get(envObserverController.getDataOfADevice);
-    
-//     app.route('/envobservers')
-//     .get(envObserverController.listAll)
-//     .post(envObserverController.registerNewDevice);
-
-//     app.route('/envobservers/:id')
-//     .get(envObserverController.findById);
-
-//     app.route('/envobservers/uploaddata')
-//     .post(envObserverController.uploadData);
-// }

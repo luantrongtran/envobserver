@@ -156,6 +156,7 @@ exports.registerNewDevice = function (req, res) {
         let newDevice = new EnvObserver();
         newDevice.owner = userId;
         newDevice.save();
+        console.log(newDevice);
         res.json(newDevice);
         return;
     }, errors => {
@@ -181,8 +182,54 @@ exports.findById = function (req, res) {
 
 };
 
-exports.linkDeviceWIthUser = function (req, res)
-{
-    const resBody = res.body;
+exports.linkDeviceWIthUser = function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(400).json({
+            errors: errors.array()
+        });
+        return;
+    }
 
-}
+    const {userId, deviceId} = req.body;
+
+    userModel.findById(userId, function (error, user) {
+        if (error) {
+            res.status(400).json({
+                errors: [{msg: `Invalid userId [${userId}]`}]
+            });
+            return;
+        } else {
+            EnvObserver.findById(deviceId, function (err, envObserver) {
+                if (err) {
+                    res.status(400).json({
+                        errors: [{msg: `Invalid deviceId [${userId}]`}]
+                    });
+                    return;
+                } else {
+                    /**
+                     * Only allow the owner of the device to transfer the ownership of the device
+                     */
+                    const decodedToken = jwt.decode(req.header('token'));
+                    const loggedInUser = decodedToken.user.userId;
+                    if (envObserver.owner.toString() !== loggedInUser) {
+                        res.status(400).json({
+                            errors: [
+                                {
+                                    msg: `Only the owner of the device can change the ownership`
+                                }
+                            ]
+                        });
+                        return;
+                    }
+
+                    envObserver.owner = userId;
+                    envObserver.save();
+                }
+                res.status(201).json();
+                return;
+            });
+        }
+    });
+};
+
