@@ -100,7 +100,9 @@ exports.signIn = async function (req, res) {
             if (err) throw err;
 
             res.json({
-                token: token
+                token: token,
+                email: user.email,
+                name: user.name
             });
         }
     );
