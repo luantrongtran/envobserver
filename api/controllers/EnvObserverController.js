@@ -39,10 +39,11 @@ exports.getDataOfADevice = function (req, res) {
     // no of records per call
     let limit = parseInt(req.query.limit, 10);
     // if no page submitted
-    if (limit === undefined || limit === null) {
+    if (limit === undefined || limit === null || limit === NaN) {
         // load page 1 by default
         limit = ENVOBSERVER_LIMIT;
     }
+    console.log(limit);
 
     let fromDate = req.query.fromDate;
 
