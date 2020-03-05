@@ -10,6 +10,8 @@ router.get('/getData', auth, envObserverController.getDataOfADevice);
 
 router.get('/', auth, envObserverController.listAll);
 
+router.put('/', auth, envObserverController.updateDevice);
+
 router.get('/:id', auth, envObserverController.findById);
 
 router.post('/linkDeviceUser', [

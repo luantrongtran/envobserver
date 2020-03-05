@@ -11,6 +11,23 @@ const jwt = require('jsonwebtoken');
 // const DEFAULT_LIMIT = 30;
 
 /**
+ * This is to update a device
+ * @param req
+ * @param res
+ */
+exports.updateDevice = function (req, res) {
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //     return res.status(400).json({
+    //         errors: errors.array()
+    //     });
+    // }
+
+    // const reqBody = req.body;
+    res.status(201).end;
+};
+
+/**
  * This returns
  * @param req
  * @param res
@@ -233,4 +250,3 @@ exports.linkDeviceWIthUser = function (req, res) {
         }
     });
 };
-

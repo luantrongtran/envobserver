@@ -17,6 +17,10 @@ var EnvObserver = new Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserModel'
+    },
+    options: {
+        type: String,
+        default: null
     }
 });
 
