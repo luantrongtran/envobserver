@@ -23,7 +23,7 @@ router.post('/linkDeviceUser', [
 /**
  * THe following 2 is used by IOT devices
  */
-router.post('/', [
+router.post('/activate', [
     check('userId').not().isEmpty().withMessage('No userId provided')
 ], envObserverController.registerNewDevice);
 router.post('/uploaddata', [], envObserverController.uploadData);
