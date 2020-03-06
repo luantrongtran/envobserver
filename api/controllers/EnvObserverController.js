@@ -66,13 +66,33 @@ exports.updateDevice = function (req, res) {
 
         // the device's options/configurations
         const {options} = req.body;
+        if (options) {
+            let deviceOption = null;
+            if (foundDevice.options) {
+                deviceOption = JSON.parse(foundDevice.options);
+            }
+            if(!deviceOption) {
+                deviceOption = {};
+            }
+
+            const pollingInterval = options.pollingInterval;
+            if (pollingInterval) {
+                deviceOption.pollingInterval = pollingInterval;
+            }
+
+            foundDevice.options = JSON.stringify(deviceOption);
+
+            isUpdated = true;
+        }
 
 
         if (isUpdated) {
             foundDevice.save().then(data => {
-                res.end();
+            }).catch(err => {
+                res.status(500).end();
             });
         }
+        res.end();
     });
 };
 
