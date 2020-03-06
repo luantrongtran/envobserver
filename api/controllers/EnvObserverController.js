@@ -9,22 +9,71 @@ const {ENVOBSERVER_LIMIT} = require("../config/config");
 const jwt = require('jsonwebtoken');
 
 // const DEFAULT_LIMIT = 30;
-
 /**
  * This is to update a device
  * @param req
  * @param res
  */
 exports.updateDevice = function (req, res) {
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //     return res.status(400).json({
-    //         errors: errors.array()
-    //     });
-    // }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
+        });
+    }
 
-    // const reqBody = req.body;
-    res.status(201).end;
+    const userId = req.user.userId;
+    const {deviceId, deviceName} = req.body;
+
+    const isValidDeviceId = mongoose.Types.ObjectId.isValid(deviceId);
+
+    const resErrors = [];
+
+    if (!isValidDeviceId) {
+        resErrors.push({
+            msg: `Not find the device [${deviceId}]`
+        });
+        res.status(400).json({errors: resErrors});
+        return;
+    }
+
+    EnvObserver.findById(deviceId, (errors, foundDevice) => {
+        if (!foundDevice) {
+            resErrors.push({
+                msg: `Not find the device [${deviceId}]`
+            });
+            res.status(400).json(resErrors);
+            return;
+        }
+
+        // checking the device belongs to the user
+        const ownerId = foundDevice.owner.toString();
+        if (ownerId !== userId) {
+            resErrors.push({
+                msg: 'Update failed. Not the owner of the device'
+            });
+            res.status(400).json({errors: resErrors});
+        }
+
+        // Checking which information of the device should be updated
+
+        // device name
+        let isUpdated = false;
+        if (deviceName) {
+            foundDevice.name = deviceName;
+            isUpdated = true;
+        }
+
+        // the device's options/configurations
+        const {options} = req.body;
+
+
+        if (isUpdated) {
+            foundDevice.save().then(data => {
+                res.end();
+            });
+        }
+    });
 };
 
 /**
@@ -49,8 +98,6 @@ exports.listAll = function (req, res) {
  * This is to get the data of a device (a.k.a EnvObserver)
  */
 exports.getDataOfADevice = function (req, res) {
-    console.log(ENVOBSERVER_LIMIT);
-
     // extract the device ID in the GET url query named deviceId
     let deviceId = req.query.deviceId;
     // no of records per call
@@ -60,7 +107,6 @@ exports.getDataOfADevice = function (req, res) {
         // load page 1 by default
         limit = ENVOBSERVER_LIMIT;
     }
-    console.log(limit);
 
     let fromDate = req.query.fromDate;
 
@@ -79,8 +125,6 @@ exports.getDataOfADevice = function (req, res) {
                     };
                     filter.recorded_at = dateRange;
                 }
-
-                console.log(filter);
 
                 let query = EnvObserverData.find(filter).sort({recorded_at: -1})
                     .lean()
@@ -124,14 +168,12 @@ exports.getDataOfADevice = function (req, res) {
  *
  */
 exports.uploadData = function (req, res) {
-    // console.log(req.body);
     var newObj = req.body;
     EnvObserver.findOne({_id: newObj.deviceId}, function (err, envObserver) {
         if (err) {
             res.status(500).end();
         } else {
             var newData = new EnvObserverData(newObj.data);
-            console.log(newObj);
             if (envObserver !== null) {
                 newData.save(function (err, envObserverData) {
                     if (err) {
@@ -168,13 +210,17 @@ exports.registerNewDevice = function (req, res) {
         return;
     }
 
-    const {userId} = req.body;
+    const {userId, deviceName, options} = req.body;
     // checking if a valid userId submitted
     userModel.findOne({_id: userId}).then((user) => {
         let newDevice = new EnvObserver();
         newDevice.owner = userId;
+
+        if (options) {
+            newDevice.options = JSON.stringify(options);
+        }
+
         newDevice.save();
-        console.log(newDevice);
         res.json(newDevice);
         return;
     }, errors => {
@@ -189,11 +235,21 @@ exports.registerNewDevice = function (req, res) {
 };
 
 exports.findById = function (req, res) {
-    var deviceId = req.params.id;
-    console.log(deviceId);
-    EnvObserver.findOne({_id: deviceId}, {deviceId: 1, name: 1}, function (err, envObserver) {
+    const deviceId = req.params.id;
+    EnvObserver.findOne({_id: deviceId}, {deviceId: 1, name: 1, options: 1}, function (err, envObserver) {
         if (err) {
+            console.log(err);
         } else {
+            if (envObserver == null) {
+                res.status(400).json({
+                    errors: [
+                        {
+                            msg: `Couldn't find the device`
+                        }
+                    ]
+                });
+                return;
+            }
             res.json(envObserver);
         }
     });

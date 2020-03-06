@@ -9,10 +9,10 @@ const auth = require('../middleware/auth');
 router.get('/getData', auth, envObserverController.getDataOfADevice);
 
 router.get('/', auth, envObserverController.listAll);
-
-router.put('/', auth, envObserverController.updateDevice);
-
 router.get('/:id', auth, envObserverController.findById);
+router.post('/', [auth,
+    check('deviceId').not().isEmpty().withMessage('Missing deviceId')
+], envObserverController.updateDevice);
 
 router.post('/linkDeviceUser', [
     auth,

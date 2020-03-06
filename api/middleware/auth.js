@@ -14,4 +14,4 @@ module.exports = function (req, res, next) {
         console.error(e);
         res.status(401).send({ message: "Invalid Token" });
     }
-}
+};
