@@ -67,20 +67,25 @@ exports.updateDevice = function (req, res) {
         // the device's options/configurations
         const {options} = req.body;
         if (options) {
-            let deviceOption = null;
+            let foundDeviceOption = null;
             if (foundDevice.options) {
-                deviceOption = JSON.parse(foundDevice.options);
+                foundDeviceOption = JSON.parse(foundDevice.options);
             }
-            if(!deviceOption) {
-                deviceOption = {};
+            if(!foundDeviceOption) {
+                foundDeviceOption = {};
             }
 
             const pollingInterval = options.pollingInterval;
             if (pollingInterval) {
-                deviceOption.pollingInterval = pollingInterval;
+                foundDeviceOption.pollingInterval = pollingInterval;
             }
 
-            foundDevice.options = JSON.stringify(deviceOption);
+            const timeOffset = options.timeOffset;
+            if (timeOffset) {
+                foundDeviceOption.timeOffset = timeOffset;
+            }
+
+            foundDevice.options = JSON.stringify(foundDeviceOption);
 
             isUpdated = true;
         }
