@@ -1,6 +1,6 @@
 # EnvObserver
 
-EnvObserver is a a hobby project I created to record temperature, humidity, and soil moisture. This has 3 modules:
+EnvObserver is a IOT project to record temperature, humidity, and soil moisture. This has 3 modules:
 
 *   [EnvObserver_arduino](https://github.com/luantrongtran/envobserver_arduino): which is an Arduino project (Arduino wifi board + sensors) to record temperature, humidity and soil moisture
 *   [EnvObserver](https://github.com/luantrongtran/envobserver): web services to which is the endpoint where Arduino units upload data
